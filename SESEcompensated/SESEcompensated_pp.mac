@@ -1,0 +1,83 @@
+########################################################
+#                 SESEcompensated_pp.mac
+## This is a double spin echo experiment where tau1 and tau2 of the two spin echos can be independently varied.
+# Nathan Williamson August 2021
+#making it possible to call as a single scan
+# Prospa V3.22
+#
+########################################################
+
+
+
+procedure(pulse_program,dir,mode)
+
+
+# Interface description (name, label, x, y, ctrlType, varType)
+   interface = ["b1Freq",      "B1 Frequency (MHz)",   "0","0",    "tbwv",   "freq",
+               "repTime",      "Repetition time (ms)", "0","1.6",   "tbwv",   "float,[20,1e8]",
+
+               "90Amplitude",  "90 amplitude (dB)",    "1","0",     "tb",     "float,[-72,-6]",
+               "180Amplitude", "180 amplitude (dB)",   "1","1",     "tb",     "pulseamp",
+               "pulseLength",  "Pulse length (us)",    "1","2",     "tb",     "float,[1,500]",
+
+               "echoTime",     "Echotime (us)",        "2","0",     "tb",     "sdelay",
+               "nrEchoes",     "Number of echoes",     "2","1",     "tb",     "integer,[1,16000]",
+               "echoShift",    "Echo shift (us)",      "2","2",     "tb",     "float,[-20,20]",
+               "gradient",     "Gradient (kHz/mm)",    "2","4",     "tbw",    "float",
+
+               "tau1",       "tau1 (ms)",         "3","1",     "tb",     "float,[0.001,100]",
+
+               "tau2",       "tau2 (ms)",         "4","1",     "tb",     "float,[0.001,100]"]
+
+  tabs = ["Pulse sequence","Acquisition","File Settings"]
+
+# Relationships between pulse-sequence and GUI parameters
+   relationships = ["a1 = 90Amplitude",
+                    "a2 = 180Amplitude",
+                    "d1 = pulseLength",
+                    "d3 = echoTime/2-acqTime*500-d1/2+rxLat+echoShift",
+                    "d4 = echoTime-d1-pgo-d3",
+                    "d5 = 1000*tau1-d1-pgo",
+                    "d7 = 1000*tau1+1000*tau2-d1-pgo", 
+                    "d8 = 1000*tau2+echoTime/2-d1-pgo",
+                    "n1 = nrEchoes",
+                    "n2 = nrPnts",
+                    "totPnts = nrEchoes",
+                    "totTime = nrEchoes*echoTime"]
+
+# These parameters will be changed between experiments
+   variables = [""]  
+
+# x and y spacing between controls
+   dim = [155,26]
+
+# Pulse sequence
+   initpp(dir) # Reset internal parameter list
+
+   cleardata(64000)
+
+   pulse(mode,a1,p1,d1)    # 90 pulse
+   delay(d5)               # tau1
+   pulse(mode,a2,p2,d1)    # 180 pulse
+
+   delay(d7)               # tau1+tau2
+   pulse(mode,a2,p3,d1)    # 180 pulse
+   delay(d8)               # tau2+ TE/2
+
+   loop(l1,n1)
+      pulse(mode,a2,p4,d1)        # 180 internal pulse
+      delay(d3)                   # 180 - acq delay
+      acquire("integrate",n2,d4)      # Acquire echo and wait. "integrate" means that all points collected are added together and the result stored in the next memory location.
+   endloop(l1)
+
+   lst = endpp() # Return parameter list
+
+
+   phaseList = [0,2,0,2,0,2,0,2;
+               1,1,3,3,3,3,1,1;
+               1,1,3,3,1,1,3,3;
+               1,1,1,1,1,1,1,1;
+               0,2,0,2,0,2,0,2]
+
+
+endproc(lst,tabs,interface,relationships,variables,dim,phaseList)

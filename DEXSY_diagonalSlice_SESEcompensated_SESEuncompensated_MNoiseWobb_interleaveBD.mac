@@ -1,0 +1,319 @@
+procedure(DEXSY_diagonalSlice_SESEcompensated_SESEuncompensated_MNoisWobb_interleaveBD)
+    
+# Cache macros
+   cd("$appdir$\\Macros\\NMR-MOUSE")
+   cachemacro("DEXSY_singlescan_2.mac","local")
+   cachemacro("SESEcompensated.mac","local")
+   cachemacro("SESEuncompensated.mac","local")
+   cachemacro("SEonetau.mac","local")
+
+   cachemacro("SEdec.mac","local")
+
+   cachemacro("Wobble_1.mac","local")
+
+   cachemacro("MonitorNoise.mac","local")
+
+   cd("$appdir$\\Macros\\Kea-Core")
+   cachemacro("keaCtrl.mac","local")
+   cachemacro("keaRun.mac","local")
+   cachemacro("keaPlot.mac","local")
+   cachemacro("keaFiles.mac","local")
+   cacheproc("true")
+
+# Set up gui par
+   
+   guipar = ["90Amplitude = -22",
+             "180Amplitude = -16",
+             "accumulate = \"yes\"",
+             "acqTime = 0.004",
+             "b1Freq = 13.79d",
+             "bandwidth = 2e+003",
+             "dataDirectory = \"C:\\Users\\aabai\\Application Data\\Prospa\\Preferences V3.2\\Data\"",
+             "dwellTime = 0.5",
+             "echoShift = -1",
+             "echoTime = 25",
+             "expName = \"test_se\"",
+             "expNr = 1",
+             "flatFilter = \"no\"",
+             "gradient = 650",
+             "incExpNr = \"yes\"",
+             "MixingTime = 10",
+             "nrEchoes = 8000",
+             "nrPnts = 8",
+             "nrScans = 8",
+             "pulseLength =2.0",
+             "repTime = 2000",
+             "rxGain = 25",
+             "rxPhase = 226",
+             "saveData = \"true\"",
+             "tau1 = .2",
+             "tau2 = .2",
+             "usePhaseCycle = \"yes\""]
+
+  guiparSEonetau = ["90Amplitude = -22",
+             "180Amplitude = -16",
+             "accumulate = \"yes\"",
+             "acqTime = 0.004",
+             "b1Freq = 13.79d",
+             "bandwidth = 2e+003",
+             "dataDirectory = \"C:\\Users\\aabai\\Documents\\Mouse\\Data\\DEXSY_baiRF\\DEXSY_diagonalSliceBD\"",
+             "dwellTime = 0.5",
+             "echoShift = -0.8",
+             "echoTime = 25",
+             "expName = \"SEonetau\"",
+             "expNr = 8",
+             "flatFilter = \"no\"",
+             "gradient = 650",
+             "incExpNr = \"yes\"",
+             "index = \"exp\"",
+             "nrEchoes = 8000",
+             "nrPnts = 8",
+             "nrScans = 4",
+             "pulseLength = 2.0",
+             "repTime = 2000",
+             "rxGain = 25",
+             "rxPhase = 226",
+             "saveData = \"true\"",
+             "tau = 0.1",
+             "usePhaseCycle = \"yes\""]
+
+
+
+ guiparSEdec = ["90Amplitude = -22",
+             "180Amplitude = -16",
+             "accumulate = \"yes\"",
+             "acqTime = 0.004",
+             "b1Freq = 13.79d",
+             "bandwidth = 2e+003",
+             "dataDirectory = \"C:\\Users\\aabai\\Documents\\Mouse\\Data\\singleShotExchange\\singleShotD_BD\"",
+            # "dataDirectory = \"C:\\Users\\aabai\\Documents\\Mouse\\Data\\DEXSY_baiRF\\DEXSY_diagonalSliceBD\"",
+             "DEst = .25",
+             "dwellTime = 0.5",
+             "echoShift = -1",
+             "echoTime = 25",
+             "expName = \"sedecBD\"",
+             "expNr = 1",
+             "flatFilter = \"no\"",
+             "gradient = 650",
+             "incExpNr = \"yes\"",
+             "index = \"lin\"",
+             "nrEchoes = 8000",
+             "nrPnts = 8",
+             "nrPntsTau = 22",
+             "nrScans = 4",
+             "pulseLength =2.0",
+             "repTime = 2000",
+             "rxGain = 13",
+             "rxPhase = 226",
+             "saveData = \"true\"",
+             "tauMax = 3.3",
+             "tauMin = 0.05",
+             "usePhaseCycle = \"yes\""]
+
+   guiparWobb = ["accumulate = \"no\"",
+             "acqTime = 0.008",
+             "aRF = -30",
+             "bandwidth = 1e+003",
+             "centFreq = 13.79d",
+            # "dataDirectory = \"C:\\Users\\aabai\\Documents\\Mouse\\Data\\singleShotExchange\\singleShotD_BD\"",
+             "dataDirectory = \"C:\\Users\\aabai\\Documents\\Mouse\\Data\\DEXSY_baiRF\\DEXSY_diagonalSliceBD\"",
+             "dwellTime = 1.0",
+             "expName = \"WobbleBD\"",
+             "expNr = 1",
+             "fixedAmp = \"yes\"",
+             "flatFilter = \"no\"",
+             "freqWidth = 0.5",
+             "incExpNr = \"no\"",
+             "logScale = \"yes\"",
+             "maxAmp = 3000",
+             "nFreqSteps = 1000",
+             "nrDecades = 3",
+             "nrPnts = 8",
+             "nrScans = 1",
+             "repTime = 500",
+             "rxGain = 10",
+             "rxPhase = 0",
+             "saveData = \"true\"",
+             "usePhaseCycle = \"no\""]
+
+   guiparMNoise = ["accumulate = \"no\"",
+             "acqTime = 0.512",
+             "b1Freq = 13.79d",
+             "bandwidth = 2e+003",
+             "dataDirectory = \"C:\\Users\\aabai\\Documents\\Mouse\\Data\\DEXSY_baiRF\\DEXSY_diagonalSliceBD\"",
+            # "dataDirectory = \"C:\\Users\\aabai\\Documents\\Mouse\\Data\\singleShotExchange\\singleShotD_BD\"",
+             "dispRange = 0",
+             "dwellTime = 0.5",
+             "expName = \"MonitorNoise\"",
+             "expNr = 6",
+             "fdPhaseCorr = \"none\"",
+             "filter = \"no\"",
+             "filterType = \"none\"",
+             "flatFilter = \"no\"",
+             "incExpNr = \"yes\"",
+             "nrPnts = 1024",
+             "nrScans = 10",
+             "refLevel = .48",
+             "repTime = 400",
+             "rxGain = 37",
+             "rxPhase = 0",
+             "saveData = \"true\"",
+             "showFreqDomain = \"yes\"",
+             "showRef = \"yes\"",
+             "showTimeDomain = \"yes\"",
+             "tdPhaseCorr = \"none\"",
+             "usePhaseCycle = \"no\""]
+
+  guiparMGSE_CPMG = ["90Amplitude = -22",
+             "180Amplitude = -16",
+             "accumulate = \"yes\"",
+             "acqTime = 0.004",
+             "alpha = 1e10",
+             "autoPhase = \"no\"",
+             "autoPhase = \"no\"",
+             "b1Freq = 13.79d",
+             "bandwidth = 2e+003",
+             "dataDirectory = \"C:\\Users\\aabai\\Documents\\Mouse\\Data\\DEXSY_baiRF\\DEXSY_diagonalSliceBD\"",
+             "dwellTime = 0.5",
+             "echoShift = -1",
+             "echoTime = 27",
+             "expName = \"MGSE_CPMG\"",
+             "expNr = 1",
+             "filter = \"no\"",
+             "filterType = \"sinebellsquared\"",
+             "fitType = \"exp\"",
+             "flatFilter = \"no\"",
+             "incExpNr = \"yes\"",
+             "normalize = \"no\"",
+             "nrEchoes = 100",
+             "nrPnts = 8",
+             "nrScans = 32",
+             "pulseLength =2.0",
+             "repTime = 2000",
+             "rxGain = 25",
+             "rxPhase = 226",
+             "saveData = \"true\"",
+             "sumEchoes = \"no\"",
+             "ted = 18",
+             "timeMag = \"no\"",
+             "usePhaseCycle = \"yes\"",
+             "x_maximum = 100",
+             "x_minimum = 0.2"]
+
+# Run the macro via the backdoor
+
+MixingTimelist=[0.2]
+#MixingTimelist=[0.2, 2, 5, 10, 20, 40, 60, 80, 120, 160, 300]
+#MixingTimelist=[0.2, 2, 10, 20, 40, 60, 80, 160, 300, 450, 600]
+#MixingTimelist=[0.2, 1, 2, 4, 7, 10, 20, 31, 43, 55, 67, 81, 96, 111, 129, 147, 168, 191, 218, 248, 327, 382, 458, 584, 1000]
+
+nMixingTime=size(MixingTimelist)
+
+
+#taulist1=[0.2,0.2,0.593,0.735]  #new tauMin=0.2 ms, bmin= 0.089 s/mm2  #point near bs=0, then 3 pts at bs=4.5E9
+#taulist2=[0.213,0.735,0.581,0.2]
+#taulist1=[0.2,0.593]    #optimizing for method 3
+#taulist2=[0.735,0.581]
+##acsf exp1
+#taulist1=[0.200,0.2,0.273,0.32,0.362,0.385,0.411,0.434]
+#taulist2=[0.213,0.434,0.411,0.385,0.349,0.32,0.273,0.2]
+##acsf exp2
+#taulist1=[0.213,0.273,0.32,0.362,0.385,0.411,0.434]
+#taulist2=[0.2,0.2,0.2,0.2,0.2,0.2,0.2]
+## spinal cord b=1
+#taulistSE=[0.2,0.2,0.228,0.251,0.27,0.287,0.302,0.315,0.328,0.339,0.35,0.361,0.37,0.38,0.388,0.397,0.405,0.413,0.42,0.427,0.434]
+#taulist1=[0.2,0.2,0.228,0.251,0.27,0.287,0.302,0.315,0.328,0.339,0.35,0.361,0.37,0.38,0.388,0.397,0.405,0.413,0.42,0.427,0.434]
+#taulist2=[0.213,0.434,0.427,0.42,0.413,0.405,0.397,0.388,0.38,0.37,0.361,0.35,0.339,0.328,0.315,0.302,0.287,0.27,0.251,0.228,0.2]
+## spinal cord b=6
+#taulistSE=[0.2,0.2,0.325,0.392,0.442,0.483,0.518,0.549,0.576,0.601,0.624,0.652,0.666,0.685,0.704,0.721,0.737,0.753,0.768,0.782,0.796,0.81]
+#taulist1=[0.2,0.2,0.325,0.392,0.442,0.483,0.518,0.549,0.576,0.601,0.624,0.652,0.666,0.685,0.704,0.721,0.737,0.753,0.768,0.782,0.796,0.81]
+#taulist2=[0.213,0.81,0.796,0.782,0.768,0.753,0.737,0.721,0.704,0.685,0.666,0.64,0.624,0.601,0.576,0.549,0.518,0.483,0.442,0.392,0.325,0.2]
+## spinal cord b=0.3
+taulistSE=[0.213,0.2,0.217,0.231,0.244,0.256,0.267]
+taulist1=[0.2,0.2,0.217,0.231,0.244,0.256,0.267]
+taulist2=[0.213,0.267,0.256,0.244,0.231,0.217,0.2]
+
+ntau=size(taulist1)
+
+
+for(kii=0 to 100)
+#kii=0
+
+   guiparWobb = setlistvalue(guiparWobb,"expNr","$kii+1$")
+   Wobble_1:backdoor(guiparWobb)
+
+   guiparMNoise = setlistvalue(guiparMNoise,"expNr","$kii+1$")   
+   MonitorNoise:backdoor(guiparMNoise)
+
+#   guiparCPMG = setlistvalue(guiparCPMG,"expNr","$kii+1$")
+#   CPMG:backdoor(guiparCPMG)
+
+#   guiparT1sat = setlistvalue(guiparT1sat,"expNr","$kii+1$")   
+#   T1Sat:backdoor(guiparT1sat)
+
+
+#Dummy Scans
+      guipar = setlistvalue(guipar,"saveData", "\"false\"")
+      DEXSY_singlescan:backdoor(guipar)
+      guipar = setlistvalue(guipar,"saveData", "\"true\"")
+
+
+ #(winVariables,parameters,filterCoef,pulseProg,tables) = keaRun:saveKeaState(guipar)
+
+ #      guiparSEdec = setlistvalue(guiparSEdec,"expNr","$kii+1$")
+ #     guiparMGSE_CPMG = setlistvalue(guiparMGSE_CPMG,"expNr","$kii+1$")
+ #       SEdec:backdoor(guiparSEdec)
+ #       MGSE_CPMG:backdoor(guiparMGSE_CPMG)
+
+ # keaRun:restoreKeaState(winVariables,parameters,filterCoef,pulseProg,tables,guipar)
+
+#for(ki=0 to 2)
+ki=0  #just running one exchange per 1-D diff
+k=kii*1+ki #change *X to length of ki list
+#for(m=0 to 1)
+m=0
+      guipar = setlistvalue(guipar,"expName","\"bs$m+1$\"")
+
+t=0
+         guiparSEonetau = setlistvalue(guiparSEonetau,"dataDirectory", "\"C:\\Users\\aabai\\Documents\\Mouse\\Data\\DEXSY_baiRF\\DEXSY_diagonalSliceBD\\set$k+1$\\SEonetau\"")
+for(n=0 to ntau-1)
+
+      guiparSEonetau = setlistvalue(guiparSEonetau,"tau", "$taulistSE[n]$")
+      guiparSEonetau = setlistvalue(guiparSEonetau,"expNr","$n+1$") 
+      SEonetau:backdoor(guiparSEonetau)
+next(n)
+      guipar = setlistvalue(guipar,"dataDirectory", "\"C:\\Users\\aabai\\Documents\\Mouse\\Data\\DEXSY_baiRF\\DEXSY_diagonalSliceBD\\set$k+1$\\MixingTime$MixingTimelist[t]$\"")
+     guipar = setlistvalue(guipar,"MixingTime","$MixingTimelist[t]$")
+for(n=0 to ntau-1)
+
+      guipar = setlistvalue(guipar,"tau1", "$taulist1[n]$")
+      guipar = setlistvalue(guipar,"tau2", "$taulist2[n]$")
+      guipar = setlistvalue(guipar,"expNr","$n+1$") 
+   DEXSY_singlescan_2:backdoor(guipar)
+next(n)
+      guipar = setlistvalue(guipar,"dataDirectory", "\"C:\\Users\\aabai\\Documents\\Mouse\\Data\\DEXSY_baiRF\\DEXSY_diagonalSliceBD\\set$k+1$\\SESEcompensated\"")
+for(n=0 to ntau-1)
+
+      guipar = setlistvalue(guipar,"tau1", "$taulist1[n]$")
+      guipar = setlistvalue(guipar,"tau2", "$taulist2[n]$")
+      guipar = setlistvalue(guipar,"expNr","$n+1$") 
+   SESEcompensated:backdoor(guipar)
+next(n)
+      guipar = setlistvalue(guipar,"dataDirectory", "\"C:\\Users\\aabai\\Documents\\Mouse\\Data\\DEXSY_baiRF\\DEXSY_diagonalSliceBD\\set$k+1$\\SESEuncompensated\"")
+for(n=0 to ntau-1)
+
+      guipar = setlistvalue(guipar,"tau1", "$taulist1[n]$")
+      guipar = setlistvalue(guipar,"tau2", "$taulist2[n]$")
+      guipar = setlistvalue(guipar,"expNr","$n+1$") 
+   SESEuncompensated:backdoor(guipar)
+next(n)
+
+#next(t)
+#next(m)
+#next(ki)
+
+
+
+
+next(kii)
+endproc()
