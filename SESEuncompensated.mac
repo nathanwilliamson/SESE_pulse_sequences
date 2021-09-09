@@ -2,9 +2,8 @@
 # 
 # SESEuncompensated
 #                 SESEuncompensated_pp.mac
-# Copyright (c) Magritek GmbH 2014
-#
-# U.I. V3
+# uncompensated double spin echo (90-tau1-180-tau1-180-tau2-180-tau2-CPMG)
+# Williamson, NH 9/9/2021
 #########################################################
 
 procedure(SESEuncompensated, guipar)
