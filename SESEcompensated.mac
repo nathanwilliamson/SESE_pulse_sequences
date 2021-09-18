@@ -2,7 +2,7 @@
 # 
 # SESEcompensated
 #                 SESEcompensated_pp.mac
-# compensated double spin echo (90-tau1-180-tau1-tau2-180-tau2-CPMG)
+# flow compensated double spin echo (90-tau1-180-tau1-tau2-180-tau2-CPMG)
 # Williamson, NH 9/9/2021
 #########################################################
 
